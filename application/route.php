@@ -9,7 +9,7 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-return [
+/*return [
     '__pattern__' => [
         'name' => '\w+',
     ],
@@ -18,4 +18,14 @@ return [
         ':name' => ['index/hello', ['method' => 'post']],
     ],
 
-];
+
+];*/
+
+/*\think\Route::group('api',function (){
+    \think\Route::get('login','user/login');
+});*/
+/*\think\Route::group('api',function (){
+    \think\Route::post('/:var/user/login','/:var.user/login');
+});*/
+
+\think\Route::get('/api/:var/login','/api/:var.user/login');

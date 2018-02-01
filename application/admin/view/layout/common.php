@@ -68,7 +68,13 @@
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <img src="/adminlet/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                            <span class="hidden-xs">用户</span>
+                            <span class="hidden-xs"><?php
+                                if(session('user_id')){
+                                $user = \think\Db::name('member')->find(session('user_id'));
+                            echo $user['username'];
+                                }else{
+                                    echo '请登录';
+                                }?></span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
@@ -141,16 +147,52 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu">
-                <li class="header">MAIN NAVIGATION</li>
-                <li class="active treeview">
+                <li class="header">{:date('Y-m-d')}</li>
+                <?php $top = \think\Db::name('menu')->where(['pid'=>0])->select();
+                foreach ($top as $k=>$v){
+                ?>
+
+                <li class="{$k==0?'active':''} treeview">
                     <a href="#">
-                        <i class="fa fa-dashboard"></i> <span>会员管理</span> <i class="fa fa-angle-left pull-right"></i>
+
+
+                        <i class="fa {$v.icon}"></i> <span>{$v.name}</span> <i class="fa fa-angle-left pull-right"></i>
+
+
                     </a>
                     <ul class="treeview-menu">
-                        <li class="active"><a href="<?=url('admin/admin/index')?>"><i class="fa  fa-user"></i>会员列表</a></li>
-                        <li><a href="<?=url('admin/admin/add')?>"><i class="fa fa-user-plus"></i> 会员添加</a></li>
+
+                        <?php
+                        foreach (\think\Db::name('menu')->where(['pid'=>$v['id']])->select() as $sc){
+
+                        ?>
+                        <li class="active"><a href="/admin/{$sc.url}"><i class="fa  {$sc.icon}"></i>{$sc.name}</a></li>
+                        <?php } ?>
                     </ul>
                 </li>
+                <?php }?>
+                <li class="treeview">
+                    <a href="#">
+
+
+                        <i class="fa fa-dashboard"></i> <span>菜单管理</span> <i class="fa fa-angle-left pull-right"></i>
+
+
+                    </a>
+                    <ul class="treeview-menu">
+
+
+                        <li class="active"><a href="<?=url('/admin/menu/index')?>"><i class="fa  fa-user"></i>菜单列表</a></li>
+
+
+                        <li><a href="<?=url('admin/admin/add')?>"><i class="fa fa-user-plus"></i> 添加会员</a></li>
+                        <li><a href="<?=url('admin/auth/groups')?>"><i class="fa fa-user-plus"></i> 管理分组</a></li>
+                        <li><a href="<?=url('admin/auth/rules')?>"><i class="fa fa-user-plus"></i> 管理权限</a></li>
+
+                    </ul>
+                </li>
+
+
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-files-o"></i>

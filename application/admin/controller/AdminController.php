@@ -12,41 +12,41 @@ namespace app\admin\controller;
 use think\Controller;
 use think\Cookie;
 use think\Db;
+use think\Session;
 
-class AdminController extends Controller
+class AdminController extends BaseController
 {
 
     public function index(){
 
-        $list =  Db::name('member')->where(['status'=>1])->paginate(2);
+        $list =  Db::name('member')->where(['status'=>1])->paginate(8);
         $this->assign('list',$list);
         return $this->fetch('show');
     }
     //登录
     public function login(){
-        //判断是否已经有登录信息
-        if(Cookie::get('username')){
-            return $this->redirect('index');
-        }
+
         if (request()->isPost()) {
             //验证验证码
 //            if(!captcha_check(input('post.captcha'))){
 //                return  $this->error('验证码不正确');
 //            }
             // 输入数据效验
+
             $username = $this->request->post('name', '', 'trim');
             $password = $this->request->post('password', '', 'trim');
             //$user =Db::name('admin')->where('password',$password)->find();
             $user =  Db::name('member')->where('username', $username)->find();
+
             if ($user && $user['password'] == $password) {
                 //保存登录信息 判断是否有保留的登录信息
-                if (Cookie::has('username')){
-                    Cookie::delete('username');
+                if (Session::has('user_id')){
+                    Session::delete('user_id');
                 }
+                Session::set('user_id',$user['id']);
                // 如果有点击记住登录
-
                 if ($this->request->post('remember')){
-                    Cookie::set('username',$user,3600*24);
+                    Cookie::set('user',$user,3600*24*30);
                 }
                 return  $this->success('登录成功，正在进入系统...', 'index');
             }else{
@@ -67,20 +67,19 @@ class AdminController extends Controller
             LogService::write('系统管理', '用户登录系统成功');
             $this->success('登录成功，正在进入系统...', '@admin');*/
         }
-
         return $this->fetch('login');
-
     }
 
 //退出登录
     public function logout()
     {
         //dump(Cookie::get('username'));exit;
-        Cookie::delete('username');
-        if(Cookie::get('username')) {
+        Session::delete('user_id');
+        Cookie::delete('user');
+        if(Session::get('user_id')) {
             return $this->error('退出失败');
         } else {
-            return $this->fetch('login');
+            return $this->redirect('login');
         }
     }
     //上传图片
@@ -121,25 +120,31 @@ class AdminController extends Controller
         return $this->fetch('images');
     }
 
-
+    //添加
     public function add(){
+
+        //获得所有分组
+        $group = Db::name('auth_group')->where('status','=',1)->select();
+        $this->assign('group',$group);
         if (Request()->isPost()) {
 
             $username = Request()->post('username', '', 'trim');
+            $group_id = Request()->post('group_id');
             $password = Request()->post('password', '', 'trim');
             $email = Request()->post('email', '', 'trim');
             $mobile = Request()->post('mobile', '', 'trim');
             $is_share_member = Request()->post('is_share_member', '', 'trim');
-            $time = time();
             if ($username && $password) {
-                if (Db::name('member')->insert(['password' => $password, 'username' => $username, 'email' => $email, 'mobile' => $mobile,  'create_time' => $time,'is_share_member'=>$is_share_member])) {
-//                    return $this->success('添加成功', url('/admin/admin/index'), 3);
-                    return $this->redirect('index');
+                Db::name('member')->insert(['password' => $password, 'username' => $username, 'email' => $email, 'mobile' => $mobile,  'create_time' => time(),'is_share_member'=>$is_share_member]);
+                $user_id =  Db::name('member')->getLastInsID();
+                if (Db::name('auth_group_access')->insert(['uid'=>$user_id,'group_id'=>$group_id])) {
+                    return $this->success('添加成功', 'index');
                 }
+                    //return $this->redirect('index');
+
             } else {
                 return $this->error('用户名或密码不能为空');
             }
-
         }
         return $this->fetch('add');
     }
@@ -163,7 +168,6 @@ class AdminController extends Controller
             } else {
                 return $this->error('用户名或密码不能为空');
             }
-
         }
         Cookie::set('id',$id);
         return $this->fetch('add');

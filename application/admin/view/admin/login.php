@@ -9,14 +9,14 @@
     <script>
         if (window != window.top) top.location.href = self.location.href;
     </script>
-    <link href="/admin/public/layui/css/layui.css" rel="stylesheet" />
-    <link href="/admin/public/font-awesome/css/font-awesome.css" rel="stylesheet" />
-    <link href="/admin/admin/css/login.css" rel="stylesheet" />
-    <link href="/admin/public/sideshow/css/normalize.css" rel="stylesheet" />
-    <link href="/admin/public/sideshow/css/demo.css" rel="stylesheet" />
-    <link href="/admin/public/sideshow/css/component.css" rel="stylesheet" />
+    <link href="/public/layui/css/layui.css" rel="stylesheet" />
+    <link href="/public/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="/public/login.css" rel="stylesheet" />
+    <link href="/public/sideshow/css/normalize.css" rel="stylesheet" />
+    <link href="/public/sideshow/css/demo.css" rel="stylesheet" />
+    <link href="/public/sideshow/css/component.css" rel="stylesheet" />
     <!--[if IE]>
-        <script src="/admin/public/sideshow/js/html5.js"></script>
+        <script src="/public/sideshow/js/html5.js"></script>
     <![endif]-->
     <style>
         canvas {
@@ -85,7 +85,7 @@
                 <canvas id="demo-canvas"></canvas>
                 <div class="kit-login-box">
                     <header>
-                        <h1>Tplay后台管理框架</h1>
+                        <h1>点餐后台管理</h1>
                     </header>
                     <div class="kit-login-main">
                         <form class="layui-form" id="login">
@@ -132,12 +132,12 @@
     </div>
     <!-- /container -->
 
-    <script src="/admin/public/layui/layui.js"></script>
-    <script src="/admin/public/sideshow/js/TweenLite.min.js"></script>
-    <script src="/admin/public/sideshow/js/EasePack.min.js"></script>
-    <script src="/admin/public/sideshow/js/rAF.js"></script>
-    <script src="/admin/public/sideshow/js/demo-1.js"></script>
-    <script src="/admin/public/jquery/jquery.min.js"></script>
+    <script src="/public/layui/layui.js"></script>
+    <script src="/public/sideshow/js/TweenLite.min.js"></script>
+    <script src="/public/sideshow/js/EasePack.min.js"></script>
+    <script src="/public/sideshow/js/rAF.js"></script>
+    <script src="/public/sideshow/js/demo-1.js"></script>
+    <script src="/public/jquery/jquery.min.js"></script>
     <script>
         layui.use(['layer', 'form'], function() {
             var layer = layui.layer,
@@ -146,7 +146,7 @@
             $(window).on('load', function() {
                 form.on('submit(login)', function(data) {
                     $.ajax({
-                        url:"{:url('admin/admin/login')}",
+                        url:"{:url('admin/login')}",
                         data:$('#login').serialize(),
                         type:'post',
                         async: false,

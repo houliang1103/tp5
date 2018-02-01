@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="col-md-8">
+    <div class="form-group">
+        <label>电话</label>
+        <span>（用户邮箱，用于找回密码等安全操作）</span>
+        <input class="form-control" value="获取地址"  type="button" onclick="getLocation()">
+        <p id="demo">12312</p>
+        <div id="mapholder"></div>
+    </div>
+</div>
+
+
+<script>
+    var x=document.getElementById("demo");
+    function getLocation()
+    {
+        //alert(111);
+        if (navigator.geolocation)
+        {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+        else{x.innerHTML="Geolocation is not supported by this browser.";}
+    }
+    function showPosition(position)
+    {
+        var latlon=position.coords.latitude+","+position.coords.longitude;
+
+        var img_url="http://maps.googleapis.com/maps/api/staticmap?center="
+            +latlon+"&zoom=14&size=400x300&sensor=false";
+
+        document.getElementById("mapholder").innerHTML="<img src='"+img_url+"' />";
+    }
+</script>
+</body>
+</html>
